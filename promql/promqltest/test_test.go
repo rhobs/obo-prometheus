@@ -34,6 +34,7 @@ func init() {
 		func(opts *tsdb.Options) {
 			opts.EnableSTStorage = true
 			opts.FloatChunkEncoding = chunkenc.EncXOR2
+			opts.EnableHistogramSTEncoding = true
 		},
 	}
 }

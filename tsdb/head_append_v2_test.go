@@ -3012,6 +3012,7 @@ func testWBLReplayAppenderV2(t *testing.T, scenario sampleTypeScenario, enableST
 	} else {
 		opts.FloatChunkEncoding.Store(uint32(chunkenc.EncXOR))
 	}
+	opts.EnableHistogramSTEncoding.Store(enableSTstorage)
 
 	h, err := NewHead(nil, nil, wal, oooWlog, opts, nil)
 	require.NoError(t, err)
@@ -3063,7 +3064,7 @@ func testWBLReplayAppenderV2(t *testing.T, scenario sampleTypeScenario, enableST
 	require.False(t, ok)
 	require.NotNil(t, ms)
 
-	chks, err := ms.ooo.oooHeadChunk.chunk.ToEncodedChunks(math.MinInt64, math.MaxInt64, h.opts.UseXOR2FloatEncoding())
+	chks, err := ms.ooo.oooHeadChunk.chunk.ToEncodedChunks(math.MinInt64, math.MaxInt64, h.opts.UseXOR2FloatEncoding(), h.opts.EnableHistogramSTEncoding.Load())
 	require.NoError(t, err)
 	require.Len(t, chks, 1)
 
@@ -4986,6 +4987,7 @@ func TestHeadAppenderV2_STStorage(t *testing.T) {
 			opts := newTestHeadDefaultOptions(DefaultBlockDuration, false)
 			opts.EnableSTStorage.Store(true)
 			opts.FloatChunkEncoding.Store(uint32(chunkenc.EncXOR2))
+			opts.EnableHistogramSTEncoding.Store(true)
 			h, _ := newTestHeadWithOptions(t, compression.None, opts)
 
 			lbls := labels.FromStrings("foo", "bar")
